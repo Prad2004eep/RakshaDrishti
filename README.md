@@ -5,7 +5,7 @@
 [![Firebase](https://img.shields.io/badge/Firebase-Latest-orange.svg)](https://firebase.google.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-A comprehensive Android mobile application focused on women's safety, empowerment, and emergency response. Built with React Native (Expo) with full offline functionality, battery-optimized operations, and multilingual support.
+A comprehensive Android mobile application focused on women's safety, empowerment, and emergency response. Built with React Native (Expo) with partially offline functionality, battery-optimized operations, and multilingual support.
 
 ---
 
