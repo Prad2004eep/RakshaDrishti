@@ -5,11 +5,31 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "rakshadrishti",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id-here"
+      }
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow RakshaDrishti to access your camera for evidence recording.",
+          "microphonePermission": "Allow RakshaDrishti to access your microphone for audio evidence.",
+          "recordAudioAndroid": true
+        }
+      ]
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "RakshaDrishti needs camera access to record evidence during emergencies.",
+        "NSMicrophoneUsageDescription": "RakshaDrishti needs microphone access to record audio evidence during emergencies.",
+        "NSPhotoLibraryUsageDescription": "RakshaDrishti needs photo library access to save evidence.",
+        "NSLocationWhenInUseUsageDescription": "RakshaDrishti needs your location to send to emergency contacts during SOS.",
+        "NSLocationAlwaysUsageDescription": "RakshaDrishti needs your location to track your safety even when the app is in background."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -19,30 +39,29 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO",
+        "READ_MEDIA_AUDIO",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "VIBRATE",
+        "RECEIVE_BOOT_COMPLETED",
+        "FOREGROUND_SERVICE",
+        "POST_NOTIFICATIONS"
+      ],
+      "package": "com.rakshaDrishti.app"
     },
     "web": {
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
-          }
-        }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+      "output": "single",
+      "favicon": "./assets/images/favicon.png",
+      "bundler": "metro"
     }
   }
 }

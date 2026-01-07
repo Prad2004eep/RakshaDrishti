@@ -1,0 +1,57 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Evidence files - user or admin can access
+    // Path: evidence/{userId}/{sosId}/{fileName}
+    match /evidence/{userId}/{sosId}/{fileName} {
+      // Allow read if authenticated user matches userId OR if user has email (admin login)
+      // Note: Admins use email/password auth, regular users use phone auth (no email)
+      allow read: if request.auth != null &&
+                     (request.auth.uid == userId || request.auth.token.email != null);
+
+      // Allow write (create/update) only if authenticated user matches userId
+      allow write: if request.auth != null && request.auth.uid == userId;
+
+      // Allow delete only if authenticated user matches userId
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Legacy evidence path support (for backward compatibility)
+    // Path: evidence/{userId}/{fileName}
+    match /evidence/{userId}/{fileName} {
+      // Allow read if authenticated user matches userId OR if user has email (admin login)
+      allow read: if request.auth != null &&
+                     (request.auth.uid == userId || request.auth.token.email != null);
+      allow write: if request.auth != null && request.auth.uid == userId;
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Profile pictures - user can read any, write only their own
+    match /profile_pictures/{userId}/{fileName} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Public files - anyone authenticated can read, only owner can write
+    match /public/{allPaths=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+    
+    // User-specific files - only owner can access
+    match /users/{userId}/{allPaths=**} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId;
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Deny all other access
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
+

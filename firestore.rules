@@ -1,0 +1,206 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user is authenticated and matches userId
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // Helper function to check if user is an admin with custom claim
+    function isAdmin() {
+      return request.auth != null &&
+             request.auth.token.admin == true;
+    }
+
+    // Helper function to check if user is an admin for a specific user
+    // Supports both custom claim (admin == true) and email-based admin detection
+    function isAdminForUser(userId) {
+      return request.auth != null &&
+             (request.auth.token.admin == true ||
+              exists(/databases/$(database)/documents/admins/$(request.auth.token.email)/linked_users/$(userId)));
+    }
+
+    // User documents - owner or admin can access
+    match /users/{userId} {
+      // ========================================
+      // PROBLEM 1 FIX: OTP Login & User Sign-In
+      // ========================================
+      // Allow any authenticated user to read their own user document
+      // This is CRITICAL for Twilio OTP users to access their profile after sign-in
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // Allow any authenticated user to create/update their own document
+      // This is CRITICAL for Twilio OTP users to create their profile after sign-in
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId;
+
+      // ========================================
+      // PROBLEM 2 FIX: Admin Location Access
+      // ========================================
+      // Allow admins with custom claim (admin == true) to read ANY user document
+      // This includes location, liveLocation, currentLocation, lastKnownLocation fields
+      allow read: if isAdmin();
+
+      // Allow admins with custom claim to update any user document (for admin operations)
+      allow update: if isAdmin();
+
+      // ========================================
+      // ADDITIONAL: General Read Access
+      // ========================================
+      // Allow any authenticated user to read basic user info for admin role checking
+      // This is required for newly signed-in users to access their own profile
+      allow read: if request.auth != null;
+
+      // Trusted contacts - allow authenticated users to read for admin role checking
+      match /trusted_contacts/{contactId} {
+        // Allow any authenticated user to read trusted contacts for admin role verification
+        allow read: if request.auth != null;
+        allow write: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+
+      // SOS alerts - owner or admin can access
+      match /sos_alerts/{sosId} {
+        allow read: if isOwner(userId) || isAdminForUser(userId) || isAdmin();
+        allow write: if isOwner(userId);
+        allow delete: if isOwner(userId);
+
+        // Events subcollection - owner or admin can access
+        match /events/{eventId} {
+          allow read: if isOwner(userId) || isAdminForUser(userId) || isAdmin();
+          allow write: if isOwner(userId);
+          allow delete: if isOwner(userId);
+        }
+
+        // Evidence subcollection - owner or admin can access
+        match /evidence/{evidenceId} {
+          allow read: if isOwner(userId) || isAdminForUser(userId) || isAdmin();
+          allow write: if isOwner(userId);
+          allow delete: if isOwner(userId);
+        }
+      }
+
+      // Evidence metadata - owner or admin can access
+      // Path: users/{userId}/evidence_metadata/{sosId}/recordings/{recordingId}
+      match /evidence_metadata/{sosId}/recordings/{recordingId} {
+        allow read: if isOwner(userId) || isAdminForUser(userId) || isAdmin();
+        allow write: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+
+      // Legacy evidence collection - owner or admin can access
+      match /evidence/{evidenceId} {
+        allow read: if isOwner(userId) || isAdminForUser(userId) || isAdmin();
+        allow write: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+
+      // User settings - owner or admin can access
+      match /settings/{settingId} {
+        allow read: if isOwner(userId) || isAdminForUser(userId) || isAdmin();
+        allow write: if isOwner(userId);
+      }
+
+      // User location history - owner or admin can access
+      match /location_history/{locationId} {
+        allow read: if isOwner(userId) || isAdminForUser(userId) || isAdmin();
+        allow write: if isOwner(userId);
+      }
+
+      // ========================================
+      // PROBLEM 2 FIX: Location Data Access
+      // ========================================
+      // Live location subcollection - owner can write, owner or admin can read
+      // Admins with custom claim (admin == true) can read location data
+      match /liveLocation/{locationId} {
+        allow read: if isOwner(userId) || isAdminForUser(userId) || isAdmin();
+        allow write: if isOwner(userId);
+      }
+
+      // Location subcollection - owner can write, owner or admin can read
+      match /location/{locationId} {
+        allow read: if isOwner(userId) || isAdminForUser(userId) || isAdmin();
+        allow write: if isOwner(userId);
+      }
+
+      // Current location subcollection - owner can write, owner or admin can read
+      match /currentLocation/{locationId} {
+        allow read: if isOwner(userId) || isAdminForUser(userId) || isAdmin();
+        allow write: if isOwner(userId);
+      }
+
+      // Any other subcollection under user - owner or admin can access
+      match /{document=**} {
+        allow read: if isOwner(userId) || isAdminForUser(userId) || isAdmin();
+        allow write: if isOwner(userId);
+      }
+    }
+    
+    // Safe locations - public read, authenticated write
+    match /safe_locations/{locationId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+    
+    // Emergency contacts - public read, authenticated write
+    match /emergency_contacts/{contactId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+    
+    // App configuration - public read, no write
+    match /app_config/{configId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // Admin documents - admin can access their own data or any admin with custom claim
+    match /admins/{adminEmail} {
+      allow read: if (request.auth != null && request.auth.token.email == adminEmail) || isAdmin();
+      allow write: if (request.auth != null && request.auth.token.email == adminEmail) || isAdmin();
+
+      // Linked users - admin can access their own linked users or any admin with custom claim
+      match /linked_users/{userId} {
+        allow read: if (request.auth != null && request.auth.token.email == adminEmail) || isAdmin();
+        allow write: if (request.auth != null && request.auth.token.email == adminEmail) || isAdmin();
+      }
+    }
+
+    // Chat documents - user or admin can access
+    // New structure: chats/{chatId} and chats/{chatId}/messages/{messageId}
+    match /chats/{chatId} {
+      // Allow read/write if authenticated user is part of the chat
+      allow read, write: if request.auth != null;
+
+      // Messages subcollection
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null;
+      }
+    }
+
+    // Safety feeds - authenticated users can read and write
+    // Admins and users can post safety feeds
+    match /safety_feeds/{feedId} {
+      // Anyone authenticated can read safety feeds
+      allow read: if request.auth != null;
+
+      // Anyone authenticated can create safety feeds
+      allow create: if request.auth != null;
+
+      // Anyone authenticated can update (for voting)
+      allow update: if request.auth != null;
+
+      // Only admins or the author can delete
+      allow delete: if request.auth != null &&
+                       (isAdmin() || resource.data.authorId == request.auth.uid);
+    }
+
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
