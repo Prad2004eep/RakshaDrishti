@@ -7,7 +7,7 @@
 
 A comprehensive Android mobile application focused on women's safety, empowerment, and emergency response. Built with React Native (Expo) with partially offline functionality, battery-optimized operations, and multilingual support.
 
----
+----
 
 ## 📋 Quick Links
 
