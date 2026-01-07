@@ -1,4 +1,4 @@
-# 🛡️ RakshaDrishti - Women's Safety & Emergency Response App
+# 🛡️ RakshaDrishti - An AI Powered Women's Safety & Emergency Response Application
 
 [![React Native](https://img.shields.io/badge/React%20Native-0.81.5-blue.svg)](https://reactnative.dev/)
 [![Expo](https://img.shields.io/badge/Expo-54.0.18-black.svg)](https://expo.dev/)
