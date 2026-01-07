@@ -62,7 +62,7 @@ TWILIO_AUTH_TOKEN=your_auth_token_here
 
 # Phone Numbers
 TWILIO_PHONE_NUMBER=+1XXXXXXXXXX
-TWILIO_WHATSAPP_NUMBER=whatsapp:+14155238886
+TWILIO_WHATSAPP_NUMBER=whatsapp:+1415523
 
 # Twilio Verify Service (for OTP)
 TWILIO_VERIFY_SERVICE_SID=VAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
