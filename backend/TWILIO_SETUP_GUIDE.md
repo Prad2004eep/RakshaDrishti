@@ -46,7 +46,7 @@ Complete guide to configure Twilio for SMS, WhatsApp, and OTP authentication.
 ### 3.1 Join WhatsApp Sandbox
 
 1. Go to **Messaging** → **Try it out** → **Send a WhatsApp message**
-2. You'll see a sandbox number: `+1 415 523 8886`
+2. You'll see a sandbox number: `+1 415 523 `
 3. Send the join code from your WhatsApp to this number
    - Example: `join <your-code>`
 4. You'll receive a confirmation message
@@ -54,7 +54,7 @@ Complete guide to configure Twilio for SMS, WhatsApp, and OTP authentication.
 
 ### 3.2 WhatsApp Number Format
 
-- Sandbox number: `whatsapp:+14155238886`
+- Sandbox number: `whatsapp:+1415523`
 - This is already configured in your `.env` file
 
 ---
@@ -65,7 +65,7 @@ Complete guide to configure Twilio for SMS, WhatsApp, and OTP authentication.
 
 1. Go to [Twilio Verify Services](https://console.twilio.com/us1/develop/verify/services)
 2. Click **Create new Service**
-3. Enter a friendly name: `RakshaDrishti OTP`
+3. Enter a friendly name: `OTP`
 4. Click **Create**
 5. Copy the **Service SID** (starts with `VA...`)
 
@@ -90,7 +90,7 @@ TWILIO_AUTH_TOKEN=your_auth_token_here
 
 # Phone Numbers
 TWILIO_PHONE_NUMBER=+1XXXXXXXXXX
-TWILIO_WHATSAPP_NUMBER=whatsapp:+14155238886
+TWILIO_WHATSAPP_NUMBER=whatsapp:+1415523
 
 # Twilio Verify Service (for OTP)
 TWILIO_VERIFY_SERVICE_SID=VAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -136,7 +136,7 @@ npm start
 
 📞 Twilio Configuration:
    SMS Number: +1XXXXXXXXXX
-   WhatsApp: whatsapp:+14155238886
+   WhatsApp: whatsapp:+1415523
    Verify Service: ✅ Enabled
 
 🔐 Authentication Endpoints:
