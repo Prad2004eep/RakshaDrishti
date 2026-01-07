@@ -60,7 +60,7 @@ From the dashboard, copy:
 
 ### 3.1 Join Sandbox
 1. Go to **Messaging** → **Try it out** → **Send a WhatsApp message**
-2. Send the join code from your WhatsApp to `+1 415 523 8886`
+2. Send the join code from your WhatsApp to `+1 415 523`
 3. You'll receive a confirmation
 
 ---
@@ -75,7 +75,7 @@ Open `backend/.env` and update:
 TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 TWILIO_AUTH_TOKEN=your_auth_token_here
 TWILIO_PHONE_NUMBER=+1XXXXXXXXXX
-TWILIO_WHATSAPP_NUMBER=whatsapp:+14155238886
+TWILIO_WHATSAPP_NUMBER=whatsapp:+1415523
 TWILIO_VERIFY_SERVICE_SID=VAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
