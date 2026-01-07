@@ -242,7 +242,7 @@ This project is licensed under the MIT License.
 
 ## 📞 Support
 
-- **Email:** support@rakshadrishti.com
+- **Email:** supprakshadrishti@gmail.com
 - **GitHub Issues:** [Report a bug](https://github.com/yourusername/RakshaDrishti/issues)
 - **Documentation:** [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md)
 
